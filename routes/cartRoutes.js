@@ -29,7 +29,9 @@ router.get("/getById/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const cart = await prisma.cart.findFirst({ where: { cartId: id } });
+    const cart = await prisma.cart.findFirst({
+      where: { cartId: parseInt(id, 10) },
+    });
 
     if (!cart)
       return res.status(404).json({
@@ -47,7 +49,9 @@ router.patch("/patch/:id", async (req, res) => {
     const { id } = req.params;
     const { count } = req.body;
 
-    const cart = await prisma.cart.findUnique({ where: { cartId: id } });
+    const cart = await prisma.cart.findUnique({
+      where: { cartId: parseInt(id, 10) },
+    });
 
     if (!cart)
       return res.status(404).json({
@@ -55,7 +59,7 @@ router.patch("/patch/:id", async (req, res) => {
       });
 
     const updatedCart = await prisma.cart.update({
-      where: { id },
+      where: { cartId: parseInt(id, 10) },
       data: {
         count,
       },
@@ -70,14 +74,16 @@ router.delete("/removeProduct/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const cart = await prisma.cart.findUnique({ where: { cartId: id } });
+    const cart = await prisma.cart.findUnique({
+      where: { cartId: parseInt(id, 10) },
+    });
 
     if (!cart)
       return res.status(404).json({
         error: "Cart not found",
       });
 
-    await prisma.cart.delete({ where: { id } });
+    await prisma.cart.delete({ where: { cartId: parseInt(id, 10) } });
     return res.status(200).json({
       message: "Cart deleted successfully",
     });
