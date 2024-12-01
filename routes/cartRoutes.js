@@ -8,7 +8,7 @@ router.post("/addProduct", async (req, res) => {
   try {
     const { userId, productId, count } = req.body;
     if (!userId || !productId || !count)
-      return res.status(400).json({
+      return res.status(404).json({
         error: "All fields required",
         message: "userId, productId, and count are mandatory",
       });
@@ -29,7 +29,7 @@ router.get("/getById/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const cart = await prisma.cart.findFirst({ where: { id } });
+    const cart = await prisma.cart.findFirst({ where: { cartId: id } });
 
     if (!cart)
       return res.status(404).json({
@@ -38,7 +38,7 @@ router.get("/getById/:id", async (req, res) => {
 
     return res.status(200).json(cart);
   } catch (err) {
-    console.error(`Error occurred in file: cartroutes, function: post -`, err);
+    console.error(`Error occurred in file: cartroutes, function: get -`, err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -47,7 +47,7 @@ router.patch("/patch/:id", async (req, res) => {
     const { id } = req.params;
     const { count } = req.body;
 
-    const cart = await prisma.cart.findUnique({ where: { id } });
+    const cart = await prisma.cart.findUnique({ where: { cartId: id } });
 
     if (!cart)
       return res.status(404).json({
@@ -62,7 +62,7 @@ router.patch("/patch/:id", async (req, res) => {
     });
     return res.status(200).json(updatedCart);
   } catch (err) {
-    console.error(`Error occurred in file: cartroutes, function: post -`, err);
+    console.error(`Error occurred in file: cartroutes, function: patch -`, err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -70,7 +70,7 @@ router.delete("/removeProduct/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const cart = await prisma.cart.findUnique({ where: { id } });
+    const cart = await prisma.cart.findUnique({ where: { cartId: id } });
 
     if (!cart)
       return res.status(404).json({
@@ -82,7 +82,10 @@ router.delete("/removeProduct/:id", async (req, res) => {
       message: "Cart deleted successfully",
     });
   } catch (err) {
-    console.error(`Error occurred in file: cartroutes, function: post -`, err);
+    console.error(
+      `Error occurred in file: cartroutes, function: delete -`,
+      err
+    );
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
